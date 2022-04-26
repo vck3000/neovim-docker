@@ -2,7 +2,8 @@ from debian:latest
 
 ENV USERNAME="victor"
 ENV AS_USER="su - $USERNAME -c"
-ENV YADM_REPO_URL=https://github.com/vck3000/dotfiles.git
+ENV YADM_REPO_URL="https://github.com/vck3000/dotfiles.git"
+ENV TERM="screen-256color"
 
 RUN apt-get update && apt-get install -y \
   build-essential \
@@ -21,6 +22,11 @@ RUN apt-get update && apt-get install -y \
 
 # Create local user and add to sudoers
 RUN adduser --disabled-password $USERNAME; usermod -aG sudo $USERNAME
+# Disable require password to sudo
+RUN echo "\n$USERNAME     ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Set zsh as default shell
+RUN sudo chsh -s $(which zsh)
 
 # Clone my dotfiles. Note double quotes needed here to substitute env varable in.
 RUN $AS_USER "yadm clone $YADM_REPO_URL"
@@ -45,48 +51,44 @@ RUN $AS_USER 'mkdir -p ~/.cache/gitstatus/ ; \
 # Reset yadm as zsh installation overwrites .zshrc
 RUN $AS_USER 'yadm reset --hard'
 
-# Language specific things
-# NVM
+# Languages
+# NVM & Node
 RUN $AS_USER 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash;'
 # Source nvm and then install node.
 RUN $AS_USER ". /home/$USERNAME/.nvm/nvm.sh; nvm install lts/*"
 
-# Download latest stable neovim
+# Download and install latest stable neovim
 RUN $AS_USER 'curl -L -o ~/nvim-linux64.tar.gz \
   https://github.com/neovim/neovim/releases/download/v0.7.0/nvim-linux64.tar.gz; \
   tar -xzf ~/nvim-linux64.tar.gz; \
   rm ~/nvim-linux64.tar.gz;'
 
-# Link in nvim. Have to separate out since it requires root permissions.
+# Link in nvim to /usr/bin. Have to separate this line out since it requires root permissions.
 RUN rm /usr/bin/nvim; ln -s /home/$USERNAME/nvim-linux64/bin/nvim /usr/bin/nvim
 
 # Install language serveres
-# RUN $AS_USER 'nvim --headless +PackerInstall +q'
-RUN echo 'asdf'
-RUN $AS_USER 'nvim --headless -c "autocmd User PackerComplete quitall" -c "PackerInstall"'
-RUN $AS_USER 'nvim --headless +"LspInstall --sync tsserver" +q'
-# RUN $AS_USER 'nvim --headless +"LspInstall --sync ccls" +q'
-# RUN $AS_USER 'nvim --headless +"LspInstall --sync clangd" +q'
-# RUN $AS_USER 'nvim --headless +"LspInstall --sync pyright" +q'
+# Typescript
+RUN $AS_USER ". /home/$USERNAME/.nvm/nvm.sh; npm install -g typescript typescript-language-server"
 
-# RUN apt-get --no-cache add \
-#   curl \
-#   python3 \
-#   neovim \
-#   fzf \
-#   bash \
-#   ripgrep \
-#   git \
-#   xclip \
-#   tzdata \
-#   zip \
-#   unzip
+# C and C++
+RUN apt-get update && apt-get install -y \
+  ccls \
+  clang \
+  clangd \
+ && rm -rf /var/lib/apt/lists/*
 
-# Add a local user with sudo permissions
-# ENV USERNAME=victor
-# RUN adduser -g "${USERNAME}" $USERNAME; echo "$USERNAME ALL=(ALL) ALL" > /etc/sudoers.d/$USERNAME && chmod 0440 /etc/sudoers.d/$USERNAME
+# Pyright - Python
+RUN $AS_USER ". /home/$USERNAME/.nvm/nvm.sh; npm install -g pyright"
+
+# Install Neovim packages
+# Note: There may be 'cmp not found' errors at the top of this command's output. Ignore them!
+RUN $AS_USER 'nvim --headless -c "autocmd User PackerComplete quitall" -c "PackerSync"'
 
 # Somehow $USERNAME isn't substituted here.
 # CMD ["su", "-", "$USERNAME", "-c", "/bin/zsh"] 
 
 CMD su - $USERNAME -c "/bin/zsh"
+
+# TODO: 
+# - Add lua LSP server
+# - Look into using zplug
