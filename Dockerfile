@@ -96,3 +96,6 @@ CMD su - $USERNAME -c "/bin/zsh"
 # TODO: 
 # - Add lua LSP server
 # - Look into using zplug
+# - Add Go!
+# - Add Rust!
+# - Remove mentions of Victor

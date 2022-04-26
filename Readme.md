@@ -2,10 +2,24 @@
 
 This repo contains the Dockerfile to set up my current development environment in full. 
 
+It includes:
+- zsh
+- powerlevel10k
+- neovim
+- My dotfiles
+- NodeJS, Python3 and Clang
+- clangd, ccls, pyright and tsserver language servers
+- tmux
+- Other misc. tools I use often!
+
+Note this is intended for the x86 architecutre.
+
 
 ## Handy commands:
+- Running pre-built image: `docker run --rm -it -v $(pwd):/home/victor/mnt vck3000/neovim`
 - Building: `docker build -t <tag_name> .`
 - Running: `docker run --rm -it -v $(pwd):/home/<username>/mnt <tag_name>`
+- Pushing: `docker push <docker_username>/<tag_name>:<version>`
 
 
 ## Inspiration:
