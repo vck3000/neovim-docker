@@ -99,3 +99,7 @@ CMD su - $USERNAME -c "/bin/zsh"
 # - Add Go!
 # - Add Rust!
 # - Remove mentions of Victor
+# - Slim down the docker image
+# - Suppress or make lesser the big prompt from powerlevel10k for stdout on zsh startup
+# - Test and add instructions for adding/mounting clangd/Python libraries into the container 
+#   for intellisense to operate.
