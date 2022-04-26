@@ -3,12 +3,12 @@
 This repo contains the Dockerfile to set up my current development environment in full. 
 
 
-# Handy commands:
-- Building: `docker build -t vck3000/neovim .`
-- Running: `docker run --rm -it vck3000/neovim`
+## Handy commands:
+- Building: `docker build -t <tag_name> .`
+- Running: `docker run --rm -it -v $(pwd):/home/<username>/mnt <tag_name>`
 
 
-# Inspiration:
+## Inspiration:
 Many other examples contributed to the final shape of my Dockerfile. Here are them in no particular order:
 
 - https://github.com/ljishen/MyVim

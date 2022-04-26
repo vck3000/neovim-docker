@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
   curl \
   fzf \
   git \
+  locales \
   neovim \
   python3 \
   ripgrep \
@@ -25,8 +26,13 @@ RUN adduser --disabled-password $USERNAME; usermod -aG sudo $USERNAME
 # Disable require password to sudo
 RUN echo "\n$USERNAME     ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
+# Set the locale so unicode characters show up correctly in tmux
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+  locale-gen && \
+  update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 LANGUAGE=en_US:en
+
 # Set zsh as default shell
-RUN sudo chsh -s $(which zsh)
+RUN sudo chsh -s $(which zsh) $USERNAME
 
 # Clone my dotfiles. Note double quotes needed here to substitute env varable in.
 RUN $AS_USER "yadm clone $YADM_REPO_URL"
@@ -55,7 +61,7 @@ RUN $AS_USER 'yadm reset --hard'
 # NVM & Node
 RUN $AS_USER 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash;'
 # Source nvm and then install node.
-RUN $AS_USER ". /home/$USERNAME/.nvm/nvm.sh; nvm install lts/*"
+RUN $AS_USER ". /home/$USERNAME/.nvm/nvm.sh; nvm install --lts"
 
 # Download and install latest stable neovim
 RUN $AS_USER 'curl -L -o ~/nvim-linux64.tar.gz \
@@ -84,10 +90,8 @@ RUN $AS_USER ". /home/$USERNAME/.nvm/nvm.sh; npm install -g pyright"
 # Note: There may be 'cmp not found' errors at the top of this command's output. Ignore them!
 RUN $AS_USER 'nvim --headless -c "autocmd User PackerComplete quitall" -c "PackerSync"'
 
-# Somehow $USERNAME isn't substituted here.
-# CMD ["su", "-", "$USERNAME", "-c", "/bin/zsh"] 
-
 CMD su - $USERNAME -c "/bin/zsh"
+# CMD tail -f /dev/null
 
 # TODO: 
 # - Add lua LSP server
