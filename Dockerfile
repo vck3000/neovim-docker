@@ -1,6 +1,6 @@
 from debian:latest
 
-ENV USERNAME="victor"
+ENV USERNAME="neovim-user"
 ENV AS_USER="su - $USERNAME -c"
 ENV YADM_REPO_URL="https://github.com/vck3000/dotfiles.git"
 ENV TERM="screen-256color"
@@ -98,7 +98,6 @@ CMD su - $USERNAME -c "/bin/zsh"
 # - Look into using zplug
 # - Add Go!
 # - Add Rust!
-# - Remove mentions of Victor
 # - Slim down the docker image
 # - Suppress or make lesser the big prompt from powerlevel10k for stdout on zsh startup
 # - Test and add instructions for adding/mounting clangd/Python libraries into the container 

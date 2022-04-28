@@ -16,7 +16,7 @@ Note this is intended for the x86 architecutre.
 
 
 ## Handy commands:
-- Running pre-built image: `docker run --rm -it -v $(pwd):/home/victor/mnt vck3000/neovim`
+- Running pre-built image: `docker run --rm -it -v $(pwd):/home/neovim-user/mnt vck3000/neovim`
 - Building: `docker build -t <tag_name> .`
 - Running: `docker run --rm -it -v $(pwd):/home/<username>/mnt <tag_name>`
 - Pushing: `docker push <docker_username>/<tag_name>:<version>`
