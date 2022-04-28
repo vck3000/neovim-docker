@@ -1,4 +1,4 @@
-from debian:latest
+from ubuntu:20.04
 
 ENV USERNAME="neovim-user"
 ENV AS_USER="su - $USERNAME -c"
@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
   locales \
   neovim \
   python3 \
+  python3-pip \
   ripgrep \
   sudo \
   tmux \
